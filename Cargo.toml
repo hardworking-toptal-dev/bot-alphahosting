@@ -1,8 +1,9 @@
 [package]
 name = "certbot-alfahosting"
-version = "0.1.0"
+version = "1.0.0"
 authors = ["Lukas Wagner <appdev.lukaswagner@gmail.com>"]
 edition = "2018"
+build="cargo-scripts/build.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

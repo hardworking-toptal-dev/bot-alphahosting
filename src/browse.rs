@@ -98,7 +98,11 @@ pub fn browse_alfahosting_domain_create_acme(
     let body = tab.find_element("body").unwrap();
     dns_open_domain_and_scroll_into_view(tab, &id);
     body.call_js_fn(
-        "function () {document.fire('dns:add_zonelist', 315259);return false;}",
+        format!(
+            "function () {{document.fire('dns:add_zonelist', {});return false;}}",
+            id
+        )
+        .as_str(),
         false,
     )
     .unwrap();

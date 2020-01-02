@@ -24,12 +24,12 @@ pub struct Configuration {
 pub struct Certpath(pub String);
 
 impl Default for Certpath {
-    #[cfg(not(production))]
+    #[cfg(not(build = "release"))]
     fn default() -> Self {
         Certpath("./tryout/letsencrypt".to_string())
     }
 
-    #[cfg(production)]
+    #[cfg(build = "release")]
     fn default() -> Self {
         Certpath("/etc/letsencrypt".to_string())
     }
@@ -61,15 +61,13 @@ pub struct AcmeConfig {
 pub struct DirectoryUrl(pub String);
 
 impl Default for DirectoryUrl {
-    #[cfg(not(production))]
+    #[cfg(not(build = "release"))]
     fn default() -> Self {
-        DirectoryUrl(String::from(
-            "https://acme-staging-v02.api.letsencrypt.org/directory",
-        ))
+        DirectoryUrl("https://acme-staging-v02.api.letsencrypt.org/directory".to_string())
     }
 
-    #[cfg(production)]
+    #[cfg(build = "release")]
     fn default() -> Self {
-        DirectoryUrl("https://acme-v02.api.letsencrypt.org/directory")
+        DirectoryUrl("https://acme-v02.api.letsencrypt.org/directory".to_string())
     }
 }
