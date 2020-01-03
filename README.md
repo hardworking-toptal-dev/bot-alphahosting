@@ -12,7 +12,7 @@ There needs to be a file `/etc/certbot-alfahosting/config.toml` containing the f
 [alfahosting]
 username = "alfauser"
 password = "alfapassword"
-# id of the contract (usually called "NameX" where X can be a number such as 30)
+## id of the contract (usually called "NameX" where X can be a number such as 30)
 ipid = "000000"
 
 # this is where you configure the email address the alfahosting login code is sent to.
@@ -27,10 +27,11 @@ password = "password"
 account = "user@example.com"
 
 [domains]
-"*.novitas-labs.com" = "000000"
-"novitas-labs.com www.novitas-labs.com mail.novitas-labs.com" = "000000"
-"novitaslaboratories.com" = "000000"
-"novitaslabs.com" = "000000"
+## IDs on the right hand side represent the ID of the domain in the
+## Alfahosting DNS configuration. It can be acquired by inspecting the
+## DOM on that page.
+"*.example.com" = "000000"
+"*.another-domain.com" = "123456"
 ```
 
 Note, that it needs the email address in order to check for the code that is sent to your email address whenever you try to log in to your alfahosting account from a new browser.
@@ -42,5 +43,7 @@ In order for the client to work best and in order to play nice with your ACME pr
 ```
 0 0 * * 0 docker run --rm -v /etc/letsencrypt:/etc/letsencrypt -v /etc/certbot-alfahosting:/etc/certbot-alfahosting certbot-alfahosting:latest
 ```
+
+Please feel free to randomize the numbers set to zero in this example as to not hit the letsencrypt servers with too high of a load at that time.
 
 
