@@ -2,6 +2,8 @@
 
 This is an ACME (letsencrypt by default) client that performs DNS-01 proofs agains an alfahosting standard contract with browser DNS settings.
 
+If you like my work consider supporting me over at [Patreon](https://www.patreon.com/lukaswagner).
+
 ## Config file
 
 There needs to be a file `/etc/certbot-alfahosting/config.toml` containing the following entries:
@@ -40,7 +42,7 @@ Note, that it needs the email address in order to check for the code that is sen
 
 In order for the client to work best and in order to play nice with your ACME provider this container is best run as a weekly cron job.
 
-```
+```crontab
 0 0 * * 0 docker run --rm -v /etc/letsencrypt:/etc/letsencrypt -v /etc/certbot-alfahosting:/etc/certbot-alfahosting certbot-alfahosting:latest
 ```
 
