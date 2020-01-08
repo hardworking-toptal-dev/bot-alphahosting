@@ -9,8 +9,9 @@ use acme_lib::order::{CsrOrder, NewOrder};
 use acme_lib::persist::FilePersist;
 use acme_lib::{Certificate, Directory, DirectoryUrl, Error};
 use headless_chrome::browser::tab::Tab;
-use std::fs::{create_dir_all, File};
+use std::fs::{create_dir_all, OpenOptions};
 use std::io::Write;
+use std::os::unix::fs::OpenOptionsExt;
 use std::sync::Arc;
 
 pub fn request_cert(
@@ -41,6 +42,7 @@ pub fn request_cert(
 
     if let Some(cert) = acc.certificate(primary)? {
         if cert.valid_days_left() > 30 {
+            save_cert_to_live(certpath.0.as_str(), primary, &cert);
             println!("Certificate \"{}\" does not need to be renewed.", primary);
             return Ok(());
         }
@@ -126,18 +128,38 @@ fn do_challenges(
 fn save_cert_to_live(certpath: &str, primary: &str, cert: &Certificate) {
     let save_path = String::from(certpath) + format!("/live/{}", primary).as_str();
     create_dir_all(save_path.as_str()).unwrap();
-    let mut file_fullchain = File::create(String::from(&save_path) + "/fullchain.pem").unwrap();
-    file_fullchain
+    OpenOptions::new()
+        .write(true)
+        .create(true)
+        .mode(0o640)
+        .open(String::from(&save_path) + "/fullchain.pem")
+        .unwrap()
         .write_all(cert.certificate().as_bytes())
         .unwrap();
-    let mut file_privkey = File::create(String::from(&save_path) + "/privkey.pem").unwrap();
-    file_privkey
+    OpenOptions::new()
+        .write(true)
+        .create(true)
+        .mode(0o640)
+        .open(String::from(&save_path) + "/privkey.pem")
+        .unwrap()
         .write_all(cert.private_key().as_bytes())
         .unwrap();
     let fullchain_arr: Vec<&str> = cert.certificate().split("\n\n").collect();
     let (singlecert, chain) = fullchain_arr.split_first().unwrap();
-    let mut file_cert = File::create(String::from(&save_path) + "/cert.pem").unwrap();
-    file_cert.write_all(singlecert.as_bytes()).unwrap();
-    let mut file_chain = File::create(String::from(&save_path) + "/chain.pem").unwrap();
-    file_chain.write_all(chain.join("\n\n").as_bytes()).unwrap();
+    OpenOptions::new()
+        .write(true)
+        .create(true)
+        .mode(0o640)
+        .open(String::from(&save_path) + "/cert.pem")
+        .unwrap()
+        .write_all(singlecert.as_bytes())
+        .unwrap();
+    OpenOptions::new()
+        .write(true)
+        .create(true)
+        .mode(0o640)
+        .open(String::from(&save_path) + "/chain.pem")
+        .unwrap()
+        .write_all(chain.join("\n\n").as_bytes())
+        .unwrap();
 }
