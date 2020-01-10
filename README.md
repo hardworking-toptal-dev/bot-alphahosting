@@ -33,7 +33,8 @@ account = "user@example.com"
 ## Alfahosting DNS configuration. It can be acquired by inspecting the
 ## DOM on that page.
 "*.example.com" = "000000"
-"*.another-domain.com" = "123456"
+# The first domain is the CN all others are aliases
+"*.another-domain.com alias.another-domain.com" = "123456"
 ```
 
 Note, that it needs the email address in order to check for the code that is sent to your email address whenever you try to log in to your alfahosting account from a new browser.
@@ -43,7 +44,7 @@ Note, that it needs the email address in order to check for the code that is sen
 In order for the client to work best and in order to play nice with your ACME provider this container is best run as a weekly cron job.
 
 ```crontab
-0 0 * * 0 docker run --rm -v /etc/letsencrypt:/etc/letsencrypt -v /etc/certbot-alfahosting:/etc/certbot-alfahosting certbot-alfahosting:latest
+0 0 * * 0 root docker run --rm -v /etc/letsencrypt:/etc/letsencrypt -v /etc/certbot-alfahosting:/etc/certbot-alfahosting m3t4lukas/certbot-alfahosting:latest
 ```
 
 Please feel free to randomize the numbers set to zero in this example as to not hit the letsencrypt servers with too high of a load at that time.
