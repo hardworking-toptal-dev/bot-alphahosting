@@ -29,7 +29,6 @@ fn main() {
     // test_config();
     println!("Starting certbot-alfahosting...");
     let config: Configuration = load_config(CONFIG_FILE_PATH).unwrap();
-    println!("Configuration file has been successfuly loaded.");
     if let Some(domains) = config.domains {
         let browser = configure_browser();
         println!("Browser has been configured.");
@@ -40,7 +39,13 @@ fn main() {
             std::thread::sleep(std::time::Duration::from_millis(
                 15_000 + (rand::random::<u64>() % 15_000),
             ));
-            let code: String = get_code_from_inbox(&config.imap).unwrap();
+            let code: String = match get_code_from_inbox(&config.imap) {
+                Ok(code) => code,
+                Err(err) => panic!(
+                    "An error occured while trying to authenticate at IMAP server: {:?}",
+                    err
+                ),
+            };
             browse_alfahosting_solve_login_protection(&tab, code);
         }
         println!("Successfully logged into alfahosting account.");
@@ -103,16 +108,8 @@ fn configure_browser() -> Browser {
 fn test_config() {
     let mut domains = Table::new();
     domains.insert(
-        String::from("novitaslaboratories.com"),
-        Value::String(String::from("315259")),
-    );
-    domains.insert(
-        String::from("novitas-labs.com"),
-        Value::String(String::from("315260")),
-    );
-    domains.insert(
-        String::from("novitaslabs.com"),
-        Value::String(String::from("315261")),
+        String::from("example.com"),
+        Value::String(String::from("123456")),
     );
     let config = Configuration {
         certpath: Certpath(String::from(".")),
@@ -131,7 +128,7 @@ fn test_config() {
             directory_url: DirectoryUrl(String::from(
                 "https://acme-staging-v02.api.letsencrypt.org/directory",
             )),
-            account: String::from("appdev.lukaswagner@gmail.com"),
+            account: String::from("user@example.com"),
         },
         domains: Some(domains),
     };

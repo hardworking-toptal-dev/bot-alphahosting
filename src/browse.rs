@@ -9,6 +9,13 @@ pub fn browse_alfahosting_signin(tab: &Arc<Tab>, config: &AlfahostingConfig) {
     tab.navigate_to("https://alfahosting.de/kunden-login/")
         .unwrap();
     tab.wait_until_navigated().unwrap();
+    let accept_cookie_button = tab
+        .find_element("[data-cookiefirst-button=\"primary\"]")
+        .unwrap();
+    accept_cookie_button.click().unwrap();
+    std::thread::sleep(std::time::Duration::from_millis(
+        5_000 + (rand::random::<u64>() % 3_000),
+    ));
     let form_login = tab.find_element("#loginForm").unwrap();
     let input_username = tab.find_element("#username").unwrap();
     let input_password = tab.find_element("#password").unwrap();
